@@ -1,5 +1,6 @@
 using DoctorWho.Db.DAL;
 using DoctorWho.Db.Repositories.DoctorRepository;
+using DoctorWho.Db.Repositories.EpisodeRepository;
 using FluentValidation;
 using System.Reflection;
 
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DoctorWhoCoreDbContext>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
