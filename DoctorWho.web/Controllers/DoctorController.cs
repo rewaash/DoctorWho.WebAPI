@@ -11,6 +11,8 @@ using DoctorWho.Db.Repositories.DoctorRepository;
 using DoctorWho.web.Models;
 using AutoMapper;
 using System.Security.Cryptography.Xml;
+using DoctorWho.web.DTOs;
+using DoctorWho.web.Validators;
 
 namespace DoctorWho.web.Controllers
 {
@@ -21,7 +23,7 @@ namespace DoctorWho.web.Controllers
         private readonly IDoctorRepository _doctorRepository;
         private readonly IMapper _mapper;
 
-        public DoctorController(IDoctorRepository doctorRepository,IMapper mapper)
+        public DoctorController(IDoctorRepository doctorRepository, IMapper mapper)
         {
             _doctorRepository = doctorRepository ?? throw new ArgumentNullException(nameof(IDoctorRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(IMapper));
@@ -34,6 +36,21 @@ namespace DoctorWho.web.Controllers
         {
             var doctors = await _doctorRepository.GetDoctorsAsync();
             return Ok(_mapper.Map<IEnumerable<DoctorDto>>(doctors));
+        }
+
+        [HttpPost("{doctorId}")]
+        public async Task<ActionResult<DoctorDto>> Upsert(int doctorId, DoctorForUpsertDto doctorforupsertdto)
+        {
+            var validator = new DoctorForUpsertValidator();
+            var result = validator.Validate(doctorforupsertdto);
+            if (!result.IsValid)
+                return BadRequest(result.Errors);
+
+
+            var doctor = _mapper.Map<Doctor>(doctorforupsertdto);
+            var upsertedEntity = await _doctorRepository.UpsertDoctorAsync(doctor, doctorId);
+
+            return Ok(_mapper.Map<DoctorDto>(upsertedEntity));
         }
 
 
