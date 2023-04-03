@@ -30,7 +30,7 @@ namespace DoctorWho.web.Controllers
 
         }
 
-        // GET: api/Doctor
+     
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DoctorDto>>> GetDoctors()
         {
@@ -46,11 +46,21 @@ namespace DoctorWho.web.Controllers
             if (!result.IsValid)
                 return BadRequest(result.Errors);
 
-
             var doctor = _mapper.Map<Doctor>(doctorforupsertdto);
             var upsertedEntity = await _doctorRepository.UpsertDoctorAsync(doctor, doctorId);
-
             return Ok(_mapper.Map<DoctorDto>(upsertedEntity));
+        }
+
+
+        [HttpDelete("{doctorId}")]
+        public async Task<ActionResult> DeleteDoctor(int doctorId)
+        {
+           var affectedRows = await _doctorRepository.DeleteDoctorAsync(doctorId);
+            if (affectedRows >0)
+                return Ok();
+            else return NotFound();
+
+
         }
 
 
