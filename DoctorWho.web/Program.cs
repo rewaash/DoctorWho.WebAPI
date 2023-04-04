@@ -1,20 +1,25 @@
+using DoctorWho.Db.DAL;
+using DoctorWho.Db.Repositories.AuthorRepository;
+using DoctorWho.Db.Repositories.DoctorRepository;
+using DoctorWho.Db.Repositories.EpisodeRepository;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+  //.AddFluentValidation(S => S.RegisterValidatoresFromAssembly(Assembly.GetExecutingAssembly()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<DoctorWhoCoreDbContext>(dbContextBuilder => dbContextBuilder
+.UseSqlServer(builder.Configuration["ConnectionStrings:DbContextConnectionString"]));
+builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 
