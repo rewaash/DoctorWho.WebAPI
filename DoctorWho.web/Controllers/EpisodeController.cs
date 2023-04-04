@@ -53,6 +53,17 @@ namespace DoctorWho.web.Controllers
             var enemy = _mapper.Map<Enemy>(enemeyForCreationDto);
             await _episodeRepository.AddEnemyToEpisode(episodeId, enemy);
             return Ok( enemy.Id);
+        }
+
+        [HttpPost("companion/{episodeId}")]
+        public async Task<ActionResult> AddCompanionToEpisode(int episodeId, CompanionForCreationDto companionForCreationDto)
+        {
+            if (!await _episodeRepository.EpisodeExistsAsync(episodeId))
+                return NotFound();
+
+            var companion = _mapper.Map<Companion>(companionForCreationDto);
+            await _episodeRepository.AddCompanionToEpisode(episodeId, companion);
+            return Ok(companion.Id);
 
 
 
