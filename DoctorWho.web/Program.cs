@@ -3,6 +3,7 @@ using DoctorWho.Db.Repositories.AuthorRepository;
 using DoctorWho.Db.Repositories.DoctorRepository;
 using DoctorWho.Db.Repositories.EpisodeRepository;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 
@@ -11,7 +12,8 @@ builder.Services.AddControllers();
   //.AddFluentValidation(S => S.RegisterValidatoresFromAssembly(Assembly.GetExecutingAssembly()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<DoctorWhoCoreDbContext>();
+builder.Services.AddDbContext<DoctorWhoCoreDbContext>(dbContextBuilder => dbContextBuilder
+.UseSqlServer(builder.Configuration["ConnectionStrings:DbContextConnectionString"]));
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
